@@ -27,16 +27,21 @@ app.use(require('morgan')('dev'))
 
 // Routes
 app.get('/', function(req, res) {
-  res.send('Hello, backend!')
+  res.render('index.ejs')
 })
 
-app.get('/test', async (req, res) => {
+app.get('/results', async (req, res) => {
   try {
     const results = await axios.get(`http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${req.query.search}`)
-    res.json({ movies: results.data})
+    res.render('results.ejs', { movies: results.data.Search })
   } catch (error) {
     console.log(error)
   }
+})
+
+app.get('/detail/:movie_id', async (req, res) => {
+  const results = await axios.get(`http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${req.params.movie_id}`)
+  res.json({ movie: results.data })
 })
 
 // The app.listen function returns a server handle
